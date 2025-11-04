@@ -11,11 +11,20 @@ config_version=5
 [application]
 
 config/name="001"
-run/main_scene="uid://8qf5rqnmca7i"
-config/features=PackedStringArray("4.4", "GL Compatibility")
+run/main_scene="uid://dml3inpvjdqca"
+config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/size/window_width_override=1920
+window/size/window_height_override=1080
+window/stretch/mode="canvas_items"
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
