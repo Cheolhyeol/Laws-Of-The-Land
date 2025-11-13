@@ -14,19 +14,23 @@ var turn_count := 0
 var turn_active := false
 
 func _ready():
-	
-	
-	# --- Verifica se há dados carregados via Global ---
-	if ProjectSettings.has_setting("autoload/Global") and Engine.has_singleton("Global"):
-		if "game_loaded_data" in Global and Global.game_loaded_data:
-			var data = Global.game_loaded_data
+	print("=== 🌍 Iniciando World Scene ===")
+
+	# --- Obtém referência ao autoload Global ---
+	var global = get_tree().root.get_node_or_null("Global")
+	if global == null:
+		push_error("❌ ERRO: Autoload 'Global' não foi encontrado! O salvamento não funcionará.")
+	else:
+		print("✅ Autoload Global detectado:", global)
+		if global.game_loaded_data and not global.game_loaded_data.is_empty():
+			var data = global.game_loaded_data
 			if data.has("turn"):
 				var turn = data["turn"]
 				if turn.has("turn_count"):
 					turn_count = turn["turn_count"]
 				if turn.has("time_left"):
 					time_left = turn["time_left"]
-			print("✅ Jogo carregado com dados:", data)
+			print("📂 Dados carregados do Global:", data)
 
 	# --- Inicializa UI ---
 	update_timer_label()
@@ -38,11 +42,12 @@ func _ready():
 	if salvar_mensagem:
 		salvar_mensagem.visible = false
 
-	# --- Conecta sinais dos botões ---
+	# --- Conecta sinais ---
 	if start_button:
 		start_button.pressed.connect(_on_iniciar_turno_button_pressed)
 	if save_button:
 		save_button.pressed.connect(_on_salvar_button_pressed)
+
 
 func _process(delta):
 	if turn_active:
@@ -51,27 +56,34 @@ func _process(delta):
 			end_turn()
 		update_timer_label()
 
+
 # --- Iniciar turno ---
 func _on_iniciar_turno_button_pressed() -> void:
 	start_turn()
 
+
 # --- Salvar jogo ---
 func _on_salvar_button_pressed() -> void:
-	print("✅ Global existe?", Engine.has_singleton("Global"))
-	print("🔎 Global type:", typeof(Global))
-	print("🔘 Botão Salvar pressionado!")
-	if Engine.has_singleton("Global"):
-		var data = {
-			"turn": {
-				"turn_count": turn_count,
-				"time_left": time_left
-			}
-		}
-		Global.save_game_data(data)
-		print("💾 Jogo salvo com sucesso!")
-		_exibir_mensagem_salva()
+	print("💾 Tentando salvar jogo...")
 
-# --- Exibe mensagem de confirmação ---
+	var global = get_tree().root.get_node_or_null("Global")
+	if global == null:
+		push_error("❌ ERRO: Autoload 'Global' não encontrado. Não é possível salvar.")
+		return
+
+	var data = {
+		"turn": {
+			"turn_count": turn_count,
+			"time_left": time_left
+		}
+	}
+
+	global.save_game_data(data)
+	print("✅ Jogo salvo com sucesso!")
+	_exibir_mensagem_salva()
+
+
+# --- Mensagem visual de feedback ---
 func _exibir_mensagem_salva():
 	if not salvar_mensagem:
 		return
@@ -79,6 +91,7 @@ func _exibir_mensagem_salva():
 	salvar_mensagem.visible = true
 	await get_tree().create_timer(2.5).timeout
 	salvar_mensagem.visible = false
+
 
 # --- Lógica do turno ---
 func start_turn():
@@ -88,6 +101,7 @@ func start_turn():
 		ampulheta_sprite.frame = 0
 		ampulheta_sprite.play("ampulheta")
 	print("▶️ Turno ", turn_count + 1, " iniciado!")
+
 
 func end_turn():
 	turn_count += 1
@@ -100,16 +114,14 @@ func end_turn():
 	update_timer_label()
 	update_button_text()
 
+
 # --- Atualizações visuais ---
 func update_timer_label():
 	var minutes = int(time_left) / 60
 	var seconds = int(time_left) % 60
 	timer_label.text = "Próximo turno em: %02d:%02d" % [minutes, seconds]
 
+
 func update_button_text():
 	var proximo_turno = turn_count + 1
 	start_button.text = "Iniciar Turno " + str(proximo_turno)
-
-
-func _on_salvarbutton_pressed() -> void:
-	pass # Replace with function body.
