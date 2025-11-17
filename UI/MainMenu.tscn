@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bs1yufc4ng1b"]
 
-[ext_resource type="Script" uid="uid://c6sh4o6hs8d7x" path="res://scripts/main_menu.gd" id="1_yqorp"]
+[ext_resource type="Script" uid="uid://c6sh4o6hs8d7x" path="res://main_menu.gd" id="1_yqorp"]
 
 [node name="MainMenu" type="Node2D"]
 script = ExtResource("1_yqorp")
@@ -40,18 +40,5 @@ text = "Sair"
 [node name="SaveStatusLabel" type="Label" parent="CanvasLayer/Panel/VBoxContainer"]
 layout_mode = 2
 
-[node name="HSeparator" type="HSeparator" parent="CanvasLayer/Panel/VBoxContainer"]
-layout_mode = 2
-
-[node name="SaveSlotList" type="ItemList" parent="CanvasLayer/Panel/VBoxContainer"]
-layout_mode = 2
-item_count = 1
-
-[node name="LoadSlotButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer"]
-layout_mode = 2
-text = "Carregar Slot
-"
-
-[node name="DeleteSlotButton" type="Button" parent="CanvasLayer/Panel/VBoxContainer"]
-layout_mode = 2
-text = "Excluir Slot"
+[connection signal="pressed" from="CanvasLayer/Panel/VBoxContainer/LoadButton" to="." method="_on_load_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Panel/VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]

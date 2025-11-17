@@ -1,11 +1,11 @@
 extends Node2D
 
 # --- Referências principais ---
-@onready var timer_label: Label = $UI/TurnoLabel
-@onready var start_button: Button = $UI/IniciarTurnoButton
-@onready var save_button: Button = $UI/SalvarButton
-@onready var ampulheta_sprite: AnimatedSprite2D = $UI/Ampulheta
-@onready var salvar_mensagem: Label = $UI/SalvarMensagem # novo label para feedback
+@onready var timer_label: Label = $UI/VBoxContainer/TurnoLabel
+@onready var start_button: Button = $UI/VBoxContainer/IniciarTurnoButton
+@onready var save_button: Button = $UI/VBoxContainer/SalvarButton
+@onready var ampulheta_sprite: AnimatedSprite2D = $UI/VBoxContainer/Ampulheta
+@onready var salvar_mensagem: Label = $UI/VBoxContainer/SalvarMensagem # novo label para feedback
 
 # --- Variáveis do sistema de turno ---
 var turn_duration := 5.0 # segundos
@@ -64,12 +64,7 @@ func _on_iniciar_turno_button_pressed() -> void:
 
 # --- Salvar jogo ---
 func _on_salvar_button_pressed() -> void:
-	print("💾 Tentando salvar jogo...")
-
-	var global = get_tree().root.get_node_or_null("Global")
-	if global == null:
-		push_error("❌ ERRO: Autoload 'Global' não encontrado. Não é possível salvar.")
-		return
+	print("💾 Salvando no slot:", Global.current_slot)
 
 	var data = {
 		"turn": {
@@ -78,9 +73,12 @@ func _on_salvar_button_pressed() -> void:
 		}
 	}
 
-	global.save_game_data(data)
-	print("✅ Jogo salvo com sucesso!")
-	_exibir_mensagem_salva()
+	if Global.save_to_slot(Global.current_slot, data):
+		print("✅ Jogo salvo no slot ", Global.current_slot)
+		_exibir_mensagem_salva()
+	else:
+		print("❌ Erro ao salvar.")
+
 
 
 # --- Mensagem visual de feedback ---
@@ -125,3 +123,7 @@ func update_timer_label():
 func update_button_text():
 	var proximo_turno = turn_count + 1
 	start_button.text = "Iniciar Turno " + str(proximo_turno)
+
+
+func _on_sair_pressed() -> void:
+	get_tree().change_scene_to_file("res://UI/MainMenu.tscn")

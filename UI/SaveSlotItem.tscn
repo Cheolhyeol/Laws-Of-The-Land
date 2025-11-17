@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://4r8c6ih255eg"]
+
+[ext_resource type="Script" uid="uid://dcsusomn3h1ep" path="res://scripts/save_slot_item.gd" id="1_s6n6b"]
+
+[node name="SaveSlotItem" type="HBoxContainer"]
+custom_minimum_size = Vector2(0, 80)
+size_flags_vertical = 4
+script = ExtResource("1_s6n6b")
+
+[node name="LabelSlot" type="Label" parent="."]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="LoadButton" type="Button" parent="."]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Carregar"
+
+[node name="DeleteButton" type="Button" parent="."]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Deletar"
